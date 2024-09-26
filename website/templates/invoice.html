@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Invoice for {{ record.challan_no }}</title>
+    <style>
+      /* Styling for the invoice */
+      .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        font-size: 16px;
+        line-height: 24px;
+        font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+        color: #555;
+      }
+      .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+      }
+      .invoice-box table th,
+      .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+      }
+      .invoice-header {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-box">
+      <div class="invoice-header">
+        <h2>Invoice</h2>
+      </div>
+      <table>
+        <tr>
+          <th>Challan No:</th>
+          <td>{{ record.challan_no }}</td>
+        </tr>
+        <tr>
+          <th>Material:</th>
+          <td>{{ record.material }}</td>
+        </tr>
+        <tr>
+          <th>Weight:</th>
+          <td>{{ record.weight }}</td>
+        </tr>
+        <tr>
+          <th>Quarry:</th>
+          <td>{{ record.quarry }}</td>
+        </tr>
+        <tr>
+          <th>Royalty Pass:</th>
+          <td>{{ record.royalty_pass }}</td>
+        </tr>
+        <tr>
+          <th>Truck No:</th>
+          <td>{{ record.truck_no }}</td>
+        </tr>
+        <tr>
+          <th>Delivered At:</th>
+          <td>{{ record.delivered_at }}</td>
+        </tr>
+        <tr>
+          <th>Created At:</th>
+          <td>{{ record.created_at }}</td>
+        </tr>
+      </table>
+      <br />
+      <button onclick="window.print()">Print Invoice</button>
+    </div>
+  </body>
+</html>
