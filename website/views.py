@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm
@@ -73,7 +72,7 @@ def register_user(request):
 	return render(request, 'register.html', {'form':form})
 
 
-@login_required(login_url='/')
+
 def customer_record(request, pk):
 	if request.user.is_authenticated:
 		# Look Up Records
@@ -84,7 +83,7 @@ def customer_record(request, pk):
 		return redirect('home')
 
 
-@login_required(login_url='/')
+
 def delete_record(request, pk):
 	if request.user.is_authenticated:
 		delete_it = Record.objects.get(id=pk)
@@ -96,7 +95,6 @@ def delete_record(request, pk):
 		return redirect('home')
 
 
-@login_required(login_url='/')
 def add_record(request):
 	form = AddRecordForm(request.POST or None)
 	if request.user.is_authenticated:
@@ -112,7 +110,7 @@ def add_record(request):
 		messages.success(request, "You Must Be Logged In...")
 		return redirect('home')
 
-@login_required(login_url='/')
+
 def update_record(request, pk):
 	if request.user.is_authenticated:
 		current_record = Record.objects.get(id=pk)
@@ -126,7 +124,7 @@ def update_record(request, pk):
 		messages.success(request, "You Must Be Logged In...")
 		return redirect('home')
 
-@login_required(login_url='/')
+
 def view_invoice(request, record_id):
     record = get_object_or_404(Record, id=record_id)
     return render(request, 'invoice.html', {'record': record})
