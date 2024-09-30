@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Record
+from .models import Record, Quarry, TruckNo, Material
 
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -32,27 +32,34 @@ class SignUpForm(UserCreationForm):
 		self.fields['password2'].label = ''
 		self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'	
 
-
-
-
-from django import forms
-from .models import Record
-
 # Create Add Record Form
 class AddRecordForm(forms.ModelForm):
-    COLOR_CHOICES = [
-        ('red', 'Red'),
-        ('green', 'Green'),
-        ('blue', 'Blue'),
-    ]
+    date = forms.CharField(
+        required=True, 
+        widget=forms.TextInput(attrs={"placeholder": "Date", "class": "form-control", "type": "date"}), 
+        label=""
+    )
     challan_no = forms.CharField(
         required=True, 
         widget=forms.TextInput(attrs={"placeholder": "Challan No", "class": "form-control"}), 
         label=""
     )
-    material = forms.CharField(
-        required=True, 
-        widget=forms.TextInput(attrs={"placeholder": "Material", "class": "form-control"}), 
+    quarry = forms.ModelChoiceField(
+        queryset=Quarry.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control dropdown-toggle"}),
+        initial=lambda: Quarry.objects.first() if Quarry.objects.exists() else None,
+        label=""
+    )
+    material = forms.ModelChoiceField(
+        queryset=Material.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control dropdown-toggle"}),
+        initial=lambda: Material.objects.first() if Material.objects.exists() else None,
+        label=""
+    )
+    truck_no = forms.ModelChoiceField(
+        queryset=TruckNo.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control dropdown-toggle"}),
+        initial=lambda: TruckNo.objects.first() if TruckNo.objects.exists() else None,
         label=""
     )
     weight = forms.CharField(
@@ -60,19 +67,9 @@ class AddRecordForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"placeholder": "Weight", "class": "form-control"}), 
         label=""
     )
-    quarry = forms.CharField(
-        required=True, 
-        widget=forms.TextInput(attrs={"placeholder": "Quarry", "class": "form-control"}), 
-        label=""
-    )
     royalty_pass = forms.CharField(
         required=True, 
         widget=forms.TextInput(attrs={"placeholder": "Royalty Pass", "class": "form-control"}), 
-        label=""
-    )
-    truck_no = forms.CharField(
-        required=True, 
-        widget=forms.TextInput(attrs={"placeholder": "Truck No", "class": "form-control"}), 
         label=""
     )
     delivered_at = forms.CharField(
@@ -92,3 +89,13 @@ class AddRecordForm(forms.ModelForm):
     class Meta:
         model = Record
         exclude = ("user",)
+        fields = [
+            "date",
+            "challan_no",
+            "quarry",
+            "material",
+            "truck_no",
+            "weight",
+            "royalty_pass",
+            "delivered_at",
+        ]
