@@ -17,14 +17,14 @@
       <thead class="table-dark">
         <tr>
           <th scope="col">SR.No</th>
+          <th scope="col">Date</th>
           <th scope="col">Challan No</th>
           <th scope="col">Material</th>
           <th scope="col">Weight</th>
           <th scope="col">Quarry</th>
           <th scope="col">Royalty Pass</th>
           <th scope="col">Truck No</th>
-          <th scope="col">Delivered At</th>
-          <th scope="col">Created At</th>
+          <th scope="col">Site</th>
           <th scope="col">View</th>
           <th scope="col">Action</th>
         </tr>
@@ -33,6 +33,7 @@
         {% if records %} {% for record in records %}
         <tr>
           <td><a>{{ record.id }}</a></td>
+          <td>{{ record.date }}</td>
           <td>{{ record.challan_no }}</td>
           <td>{{ record.material }}</td>
           <td>{{ record.weight }}</td>
@@ -40,7 +41,6 @@
           <td>{{ record.royalty_pass }}</td>
           <td>{{ record.truck_no }}</td>
           <td>{{ record.delivered_at }}</td>
-          <td>{{ record.created_at }}</td>
           <td>
             <a href="{% url 'view_invoice' record.id %}"
               ><i class="bi bi-receipt"></i
