@@ -13,7 +13,7 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name
-class TruckNo(models.Model):
+class Truck_no(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -28,8 +28,8 @@ class Record(models.Model):
     weight = models.CharField(max_length=15)
     quarry = models.ForeignKey(Quarry, on_delete=models.CASCADE) 
     royalty_pass = models.CharField(max_length=50)
-    truck_no = models.ForeignKey(TruckNo, on_delete=models.CASCADE)
-    delivered_at = models.CharField(max_length=20)
+    truck_no = models.ForeignKey(Truck_no, on_delete=models.CASCADE)
+    site = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"{self.truck_no} {self.delivered_at}"
+        return f"{self.truck_no} {self.site}"

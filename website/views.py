@@ -4,19 +4,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm
-from .models import Record
+from .models import Record, Quarry, Material, Truck_no
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
+from datetime import datetime
 
 
 def user_records(request):
+    if request.user.is_superuser:
+        return Record.objects.all()
     if request.user.is_authenticated:
         return Record.objects.filter(user=request.user)
     return None  
 
 def home(request):
-    # Handle POST request for login
     if request.method == 'POST':
+        # Handle login logic
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
@@ -27,25 +30,43 @@ def home(request):
         else:
             messages.error(request, "There was an error logging in. Please try again.")
             return redirect('home')
-    
-    # Handle GET request to display records (for authenticated users)
+
     else:
         records = user_records(request)  # Get records for logged-in user
         filter_query = request.GET.get('filter_query', '')
-        
+        start_date = request.GET.get('start_date')  # New date filter
+        end_date = request.GET.get('end_date')      # New date filter
+		
         if records:
             if filter_query:
-                # Filter records based on user input
-                records = records.filter(
-                    Q(challan_no__exact=filter_query) |
-                    Q(material__exact=filter_query) |
-                    Q(quarry__exact=filter_query) |
-                    Q(truck_no__exact=filter_query)
-                )
-            return render(request, 'home.html', {'records': records, 'filter_query': filter_query})
+                # Get the quarry, material, and truck names
+                quarry_data = Quarry.objects.filter(name__exact=filter_query).first()  # Get the first matching object or None
+                material_data = Material.objects.filter(name__exact=filter_query).first()
+                truck_data = Truck_no.objects.filter(name__exact=filter_query).first()  # Note: Updated to 'Truck'
+
+                # Construct the filter conditions
+                filter_conditions = Q(challan_no__exact=filter_query)
+                if material_data:
+                    filter_conditions |= Q(material=material_data)
+                if quarry_data:
+                    filter_conditions |= Q(quarry=quarry_data)
+                if truck_data:
+                    filter_conditions |= Q(truck=truck_data)
+
+                records = records.filter(filter_conditions)  # Use the constructed filter conditions
+                
+            if start_date and end_date:
+                try:
+                    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+                    end_date = datetime.strptime(end_date, '%Y-%m-%d')
+                    records = records.filter(date__range=(start_date, end_date))
+                except ValueError:
+                    messages.error(request, "Invalid date format. Please use YYYY-MM-DD.")
+
+            return render(request, 'home.html', {'records': records, 'filter_query': filter_query, 'start_date': start_date, 'end_date': end_date})
         else:
             messages.error(request, "No records found or you are not logged in.")
-            return render(request, 'home.html')  # Pass empty context if no records found
+            return render(request, 'home.html')
 
 
 def logout_user(request):

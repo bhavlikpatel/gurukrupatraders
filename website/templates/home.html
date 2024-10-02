@@ -1,71 +1,107 @@
 {% extends 'base.html' %} {% block content %} {% if user.is_authenticated %}
 
-<div class="container">
-  <form method="GET" action="{% url 'home' %}" class="mb-3">
+<form method="GET" action="{% url 'home' %}" class="mb-3">
+  <!-- Search Box -->
+  <div class="mb-2">
     <input
       type="text"
       name="filter_query"
       value="{{ filter_query }}"
       placeholder="Search..."
       class="form-control"
+      aria-label="Search"
     />
-    <button type="submit" class="btn btn-primary mt-2">Filter</button>
-  </form>
-
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
-      <thead class="table-dark">
-        <tr>
-          <th scope="col">SR.No</th>
-          <th scope="col">Date</th>
-          <th scope="col">Challan No</th>
-          <th scope="col">Material</th>
-          <th scope="col">Weight</th>
-          <th scope="col">Quarry</th>
-          <th scope="col">Royalty Pass</th>
-          <th scope="col">Truck No</th>
-          <th scope="col">Site</th>
-          <th scope="col">View</th>
-          <th scope="col">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% if records %} {% for record in records %}
-        <tr>
-          <td><a>{{ record.id }}</a></td>
-          <td>{{ record.date }}</td>
-          <td>{{ record.challan_no }}</td>
-          <td>{{ record.material }}</td>
-          <td>{{ record.weight }}</td>
-          <td>{{ record.quarry }}</td>
-          <td>{{ record.royalty_pass }}</td>
-          <td>{{ record.truck_no }}</td>
-          <td>{{ record.delivered_at }}</td>
-          <td>
-            <a href="{% url 'view_invoice' record.id %}"
-              ><i class="bi bi-receipt"></i
-            ></a>
-          </td>
-          <td>
-            <a href="{% url 'record' record.id %}">
-              <button type="button" class="btn btn-warning btn-sm">
-                Delete/Update
-              </button>
-            </a>
-          </td>
-        </tr>
-        {% endfor %} {% else %}
-        <tr>
-          <td colspan="11" class="text-center">No records found.</td>
-        </tr>
-        {% endif %}
-      </tbody>
-    </table>
   </div>
+
+  <!-- Date and Filter Button in One Line -->
+  <div class="d-flex align-items-end">
+    <div class="input-group me-2">
+      <label for="start_date" class="me-2">Start Time</label>
+      <input
+        type="date"
+        class="form-control form-control-sm"
+        name="start_date"
+        id="start_date"
+        value="{{ start_date }}"
+        aria-label="Start Date"
+      />
+    </div>
+
+    <div class="input-group me-2">
+      <label for="end_date" class="me-2">End Time</label>
+      <input
+        type="date"
+        class="form-control form-control-sm"
+        name="end_date"
+        id="end_date"
+        value="{{ end_date }}"
+        aria-label="End Date"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </div>
+</form>
+
+<!-- Print Button -->
+<button class="btn btn-secondary mb-3" onclick="printTable()">
+  Print Records
+</button>
+
+<!-- Table to Print -->
+<div class="table-responsive" id="printableArea">
+  <table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">SR.No</th>
+        <th scope="col">Date</th>
+        <th scope="col">Challan No</th>
+        <th scope="col">Material</th>
+        <th scope="col">Weight</th>
+        <th scope="col">Quarry</th>
+        <th scope="col">Royalty Pass</th>
+        <th scope="col">Truck No</th>
+        <th scope="col">Site</th>
+        <th scope="col" class="no-print">View</th>
+        <th scope="col" class="no-print">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if records %} {% for record in records %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ record.date }}</td>
+        <td>{{ record.challan_no }}</td>
+        <td>{{ record.material }}</td>
+        <td>{{ record.weight }}</td>
+        <td>{{ record.quarry }}</td>
+        <td>{{ record.royalty_pass }}</td>
+        <td>{{ record.truck_no }}</td>
+        <td>{{ record.site }}</td>
+        <td class="no-print">
+          <a href="{% url 'view_invoice' record.id %}">
+            <i class="bi bi-receipt"></i>
+          </a>
+        </td>
+        <td class="no-print">
+          <a href="{% url 'record' record.id %}">
+            <button type="button" class="btn btn-warning btn-sm">
+              Delete/Update
+            </button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %} {% else %}
+      <tr>
+        <td colspan="11" class="text-center">No records found.</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
 </div>
 
 {% else %}
-
+<!-- Login form if not authenticated -->
 <div class="col-md-6 offset-md-3">
   <h1>Login</h1>
   <br />
@@ -94,6 +130,5 @@
     <br />
     <button type="submit" class="btn btn-secondary">Login</button>
   </form>
-
-  {% endif %} {% endblock %}
 </div>
+{% endif %} {% endblock %}

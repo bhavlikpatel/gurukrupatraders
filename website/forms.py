@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Record, Quarry, TruckNo, Material
+from .models import Record, Quarry, Truck_no, Material
 
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -41,7 +41,7 @@ class AddRecordForm(forms.ModelForm):
     )
     challan_no = forms.CharField(
         required=True, 
-        widget=forms.TextInput(attrs={"placeholder": "Challan No", "class": "form-control"}), 
+        widget=forms.TextInput(attrs={"placeholder": "challan No", "class": "form-control"}), 
         label=""
     )
     quarry = forms.ModelChoiceField(
@@ -57,9 +57,9 @@ class AddRecordForm(forms.ModelForm):
         label=""
     )
     truck_no = forms.ModelChoiceField(
-        queryset=TruckNo.objects.all(),
+        queryset=Truck_no.objects.all(),
         widget=forms.Select(attrs={"class": "form-control dropdown-toggle"}),
-        initial=lambda: TruckNo.objects.first() if TruckNo.objects.exists() else None,
+        initial=lambda: Truck_no.objects.first() if Truck_no.objects.exists() else None,
         label=""
     )
     weight = forms.CharField(
@@ -72,9 +72,9 @@ class AddRecordForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"placeholder": "Royalty Pass", "class": "form-control"}), 
         label=""
     )
-    delivered_at = forms.CharField(
-        required=True, 
-        widget=forms.TextInput(attrs={"placeholder": "Delivered At", "class": "form-control"}), 
+    site = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Site", "class": "form-control"}), 
         label=""
     )
     
@@ -97,5 +97,5 @@ class AddRecordForm(forms.ModelForm):
             "truck_no",
             "weight",
             "royalty_pass",
-            "delivered_at",
+            "site",
         ]
